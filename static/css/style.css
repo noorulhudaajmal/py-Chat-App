@@ -1,0 +1,125 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    overflow-y: hidden;
+}
+
+.navbar{
+    background-color: rgb(105, 105, 128);
+}
+
+.custom-width {
+    max-width: 500px;
+    margin: auto;
+}
+
+.nav-pills {
+    max-width: 600px;
+    margin: auto;
+}
+
+.auth-status {
+    border-bottom: 5px solid rgb(86, 122, 233);
+    color: white;
+    background-color: rgba(65,105,225,0.2);
+}
+
+.chat-pan {
+    background: rgba(65,105,225,0.2);
+}
+
+.chat-pan {
+    background: rgba(65,105,225,0.2);
+}
+
+.chat-pan {
+    height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f8f9fa;
+    overflow: hidden;
+    margin-top: 2rem;
+}
+
+#messageContainer {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#messageContainer::-webkit-scrollbar {
+    width: 0;
+}
+
+.message {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 80%;
+    word-wrap: break-word;
+    display: inline-block;
+}
+
+.message.current-user {
+    background-color: #d1e7dd;
+    align-self: flex-end;
+}
+
+.message.other-user {
+    background-color: #d1e7dd;
+    align-self: flex-start;
+}
+
+.status-message {
+    margin: 10px 0;
+    padding: 5px 40px;
+    border-radius: 20px;
+    width: 22%;
+    text-align: center;
+    max-width: 80%;
+    word-wrap: break-word;
+    /* display: inline-block; */
+    display: inline-block;
+    align-self: center;
+}
+
+.status-message.left-status{
+    background-color: rgb(243, 139, 121);
+}
+
+.status-message.joined-status{
+    background-color:rgb(182, 182, 182);
+}
+
+.input-group {
+    border-top: 1px solid #dee2e6;
+    padding: 10px;
+    background-color: #f8f9fa;
+}
+
+.input-group .form-control {
+    border-radius: 20px 0 0 20px;
+}
+
+.input-group .btn {
+    border-radius: 0 20px 20px 0;
+}
+
+@media (max-width: 768px) {
+    .chat-pan {
+        margin: 10px;
+    }
+}
+

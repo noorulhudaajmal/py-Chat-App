@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}HOME{% endblock %}
+
+{% block content %}
+<style>
+
+
+</style>
+<nav class="navbar navbar-expand-lg bg-body-tertiary py-3">
+    <div class="container-fluid px-5">
+        <a class="navbar-brand" href="#">Chat App</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <a class="d-flex align-items-center text-decoration-none px-4" href="{{ url_for('logout') }}" role="button"
+            style="color: tomato; font-weight: 600;"
+                    id="leaveRoomBtn" aria-expanded="false">
+                    <span>Leave Room</span>
+                    <i class="ri-logout-box-r-line rounded-circle me-2"></i>
+                </a>
+            <div class="dropdown">
+                <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" role="button"
+                    id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="{{ url_for('static', filename='dp.png') }}" alt="Profile" width="30" height="30"
+                        class="rounded-circle me-2">
+                    <span>{{ current_user.username }}</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                    <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container border border-light rounded py-2 chat-pan">
+    <div id="messageContainer" class="mb-3" style="max-height: 80%; overflow-y: scroll;">
+        <!-- Messages -->
+    </div>
+
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" id="msgField" placeholder="Type your message..." aria-label="message"
+            aria-describedby="message">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" id="sendBtn" type="button">Send</button>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='index.js') }}"></script>
+<script>
+    //WebSocket connection
+    const socket = io();
+
+    const messageContainer = document.getElementById("messageContainer");
+    const msgField = document.getElementById("msgField");
+    const sendBtn = document.getElementById("sendBtn");
+
+
+    function appendMessage(data) {
+        if (!data.from || !data.message || !data.time) return;
+
+        const messageDiv = document.createElement("div");
+        const isCurrentUser = data.from === "{{ current_user.username }}";
+
+        const joined = data.message === "[JOINED]";
+        const left = data.message === "[LEFT]";
+
+        console.log(joined);
+        console.log(left);
+
+        if (joined || left) {
+            const statusDiv = document.createElement("div");
+            statusDiv.classList.add("status-message");
+
+            statusDiv.textContent = `${data.from} ${joined ? "joined" : "left"} the chat`;
+            statusDiv.classList.add(joined ? "joined-status" : "left-status");
+
+            messageContainer.appendChild(statusDiv);
+        } else {
+
+            messageDiv.classList.add("message", isCurrentUser ? "current-user" : "other-user");
+            messageDiv.innerHTML = `
+                <strong>${data.from}</strong>
+                <span class="text-muted" style="font-size: 0.85em;">[${data.time}]</span>
+                <p>${data.message}</p>
+            `;
+            messageContainer.appendChild(messageDiv);
+        }
+
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+
+
+    sendBtn.addEventListener("click", () => {
+        const messageText = msgField.value.trim();
+        if (messageText) {
+            socket.emit("send_message", { message: messageText });
+            msgField.value = "";
+        }
+    });
+
+    msgField.addEventListener("keypress", (event) => {
+        if (event.key === "Enter") {
+            sendBtn.click();
+        }
+    });
+
+    socket.on("receive_message", (data) => {
+        appendMessage(data);
+    });
+
+    socket.emit("get_messages");
+    socket.on("previous_messages", (data) => {
+        if (data.messages) {
+            data.messages.forEach((message) => {
+                appendMessage(message);
+            });
+        }
+    });
+
+</script>
+
+{% endblock %}
